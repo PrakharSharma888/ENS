@@ -10,9 +10,19 @@ export default function Home() {
   const web3ModalRef = useRef()
   const [walletConnected, setWalletConnected] = useState(false)
   const [address, setAddress] = useState("")
+  const [ENS, setENS] = useState("")
+
+  const setENSOrAddress = async (address, web3Provider) =>{
+    const _ens = await web3Provider.lookupAddress(address)
+    if(_ens){
+      setENS(_ens)
+    }
+    else{
+      setAddress(address)
+    }
+  }
 
   const getSignerOrProvider = async(signer = false) =>{
-    
     try {
 
         const provider = await web3ModalRef.current.connect()
@@ -25,7 +35,7 @@ export default function Home() {
         if(signer){
           const signer = await web3Provider.getSigner()
           const address = await signer.getAddress()
-          
+          await setENSOrAddress(address,web3Provider)
           return signer;
         }
         return web3Provider
@@ -46,6 +56,21 @@ export default function Home() {
     }
   }
 
+  const renderButton = () =>{
+    if(walletConnected){
+      return (
+        <div>Wallet Connected!</div>
+      );
+    }
+    else{
+      return(
+        <button className={styles.button} onClick={connectWallet}>
+          Connect Wallet!
+        </button>
+      );
+    }
+  }
+
   useEffect(()=>{
     if(!walletConnected){
 
@@ -60,8 +85,28 @@ export default function Home() {
   })
 
   return (
-    <>
-    
-    </>
+    <div>
+      <Head>
+        <title>ENS Dapp</title>
+        <meta name="description" content="ENS-Dapp" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <div className={styles.main}>
+        <div>
+          <h1 className={styles.title}>Welcome to the ENS Show!</h1>
+        </div>
+        <div className={styles.description}>
+          This must be your address oe your ENS name
+        </div>
+        {renderButton}
+      </div>
+      <div>
+        <image className={styles.image} src='./ens.png'/>
+      </div>
+
+      <footer className={styles.footer}>
+        Made with &#10084; by Prakhar Sharma
+      </footer>
+    </div>
   )
 }
