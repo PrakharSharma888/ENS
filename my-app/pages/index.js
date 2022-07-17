@@ -24,16 +24,15 @@ export default function Home() {
 
   const getSignerOrProvider = async(signer = false) =>{
     try {
-
         const provider = await web3ModalRef.current.connect()
-        const web3Provider = await providers.Web3Provider(provider)
+        const web3Provider = new providers.Web3Provider(provider)
 
         const { chainId } = await web3Provider.getNetwork()
         if(chainId !== 4){
           window.alert("Change to Rinkeby!");
         }
         if(signer){
-          const signer = await web3Provider.getSigner()
+          const signer = web3Provider.getSigner()
           const address = await signer.getAddress()
           await setENSOrAddress(address,web3Provider)
           return signer;
@@ -58,9 +57,7 @@ export default function Home() {
 
   const renderButton = () =>{
     if(walletConnected){
-      return (
         <div>Wallet Connected!</div>
-      );
     }
     else{
       return(
@@ -91,19 +88,18 @@ export default function Home() {
         <meta name="description" content="ENS-Dapp" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className={styles.main}>
+      <div>
         <div>
-          <h1 className={styles.title}>Welcome to the ENS Show!</h1>
+          <h1 className={styles.title}>Welcome to the ENS Show! {ENS ? ENS:address}</h1>
         </div>
         <div className={styles.description}>
           This must be your address oe your ENS name
         </div>
-        {renderButton}
+        {renderButton()}
       </div>
       <div>
-        <image className={styles.image} src='./ens.png'/>
+          <img className={styles.image} src="./learnweb3punks.png" />
       </div>
-
       <footer className={styles.footer}>
         Made with &#10084; by Prakhar Sharma
       </footer>
